@@ -1,5 +1,6 @@
 /**
 *	Binary Search Tree (BST)
+*	unbalanced
 *
 *	@author Lakha Singh
 */
@@ -24,6 +25,10 @@
 	var _traverse = function( data ){
 		var found = null, node;
 
+		if ( !data ){
+			return null;
+		}
+
 		// start from root
 		node = root;
 
@@ -44,13 +49,21 @@
 	// Root node for tree
 	var root = null;
 
-	var BST = function(){
-
+	var BST = function( data ){
+		if ( data ){
+			if ( typeof data == 'number' ){
+				this.insert( data );
+			}else if ( data.length ){
+				for ( i = 0; i < data.length; i++ ){
+					this.insert( data[i] );
+				}
+			}
+		}
 	}
 
 	// Insert new node
 	BST.prototype.insert = function( data ){
-		var found = _traverse( data );
+		var found = _traverse( data.data || data );
 
 		var node;
 
@@ -60,8 +73,7 @@
 			return null;
 		}
 
-		// create new node
-		node = _createNode( data );
+		node = data.data && data || _createNode( data );
 
 		// it is a root
 		if( found == null ){
@@ -72,12 +84,9 @@
 		else {
 			node.parent = found;
 
-			// If found in left subtree
-			if( data < found.data ){
+			if( (data.data || data) < found.data ){
 				found.children[0] = node;
-			}
-			// If found in right subtree
-			else{
+			}else{
 				found.children[1] = node;
 			}
 		}
@@ -87,11 +96,23 @@
 	BST.prototype.delete = function( data ){
 		var found = _traverse( data );
 
-		var node;
+		var node, parent, leftChild, rightChild;
 
 		// If found
 		if ( found && found.data == data ){
-			
+			parent = found.parent;
+			leftChild = found.children[0];
+			rightChild = found.children[1];
+
+			if ( parent.children[0] == found ){
+				parent.children[0] = null;
+			}else{
+				parent.children[1] = null;
+			}
+
+			// Re-insert left / right subtrees
+			this.insert( leftChild );
+			this.insert( rightChild );
 		}
 	}
 
