@@ -6,6 +6,11 @@
 */
 
 (function(){
+	var CHILD = {
+		left: 0,
+		right: 1
+	};
+
 	// to create a new tree node
 	var _createNode = function( data ){
 		var children = [];
@@ -21,8 +26,9 @@
 		}
 	}
 
-	// to traverse the tree
-	var _traverse = function( data ){
+	// searches for data, returns its node from tree
+	// if not found, it returns position where it can be inserted
+	var _search = function( data, start ){
 		var found = null, node;
 
 		if ( !data ){
@@ -30,7 +36,7 @@
 		}
 
 		// start from root
-		node = root;
+		node = start || root;
 
 		while( node != null ){
 			found = node;
@@ -44,6 +50,25 @@
 		}
 
 		return found;
+	}
+
+	var _print = function( node ){
+		if ( !node ){
+			return false;
+		}
+
+		if ( node.children[0] == null ){
+			console.log( node.data );
+
+			if ( node.children[1] == null ){
+				return true;
+			}else{
+				return _print( node.children[1] );
+			}
+		}
+		_print( node.children[0]);
+		console.log( node.data );
+		_print( node.children[1]);
 	}
 
 	// Root node for tree
@@ -63,7 +88,7 @@
 
 	// Insert new node
 	BST.prototype.insert = function( data ){
-		var found = _traverse( data.data || data );
+		var found = _search( data.data || data );
 
 		var node;
 
@@ -75,7 +100,7 @@
 
 		node = data.data && data || _createNode( data );
 
-		// it is a root
+		// tree not yet exists, create its root
 		if( found == null ){
 			root = node;
 		}
@@ -94,11 +119,11 @@
 
 	// delete node
 	BST.prototype.delete = function( data ){
-		var found = _traverse( data );
+		var found = _search( data );
 
-		var node, parent, leftChild, rightChild;
+		var parent, leftChild, rightChild;
 
-		// If found
+		// If node is found
 		if ( found && found.data == data ){
 			parent = found.parent;
 			leftChild = found.children[0];
@@ -113,12 +138,14 @@
 			// Re-insert left / right subtrees
 			this.insert( leftChild );
 			this.insert( rightChild );
+		}else{
+			console.log('Data doesn\'t exists');
 		}
 	}
 
 	// Search for node
 	BST.prototype.search = function( data ){
-		var found = _traverse( data );
+		var found = _search( data );
 
 		// when found
 		if ( found && found.data == data ){
@@ -126,6 +153,13 @@
 		}else{
 			return -1;
 		}
+	}
+
+	// Prints tree
+	BST.prototype.print = function(){
+		var node = root;
+
+		_print( node );
 	}
 
 	// Supporting browser and node env
