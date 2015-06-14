@@ -1,17 +1,14 @@
 /**
 *	Binary Search Tree (BST)
-*	unbalanced
 *
 *	@author Lakha Singh
 */
 
 (function(){
-	var CHILD = {
-		left: 0,
-		right: 1
-	};
+	// Root node for tree
+	var root = null;
 
-	// to create a new tree node
+	// Create's new node
 	var _createNode = function( data ){
 		var children = [];
 
@@ -26,8 +23,8 @@
 		}
 	}
 
-	// searches for data, returns its node from tree
-	// if not found, it returns position where it can be inserted
+	// if found, returns node 
+	// if not found, it returns node around which it can be inserted
 	var _search = function( data, start ){
 		var found = null, node;
 
@@ -52,6 +49,7 @@
 		return found;
 	}
 
+	// Prints tree (inorder)
 	var _print = function( node ){
 		if ( !node ){
 			return false;
@@ -71,9 +69,7 @@
 		_print( node.children[1]);
 	}
 
-	// Root node for tree
-	var root = null;
-
+	// Constructor
 	var BST = function( data ){
 		if ( data ){
 			if ( typeof data == 'number' ){
@@ -88,9 +84,14 @@
 
 	// Insert new node
 	BST.prototype.insert = function( data ){
-		var found = _search( data.data || data );
+		var found, node;
 
-		var node;
+		if ( !data ){
+			return null;
+		}
+
+		// search if data already exists
+		found = _search( data.data || data );
 
 		// Duplicates not suppoted
 		if ( found && found.data == data ){
@@ -143,7 +144,7 @@
 		}
 	}
 
-	// Search for node
+	// Search node
 	BST.prototype.search = function( data ){
 		var found = _search( data );
 
